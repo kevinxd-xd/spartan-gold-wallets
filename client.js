@@ -6,6 +6,9 @@ let Blockchain = require('./blockchain.js');
 
 let utils = require('./utils.js');
 
+const { mnemonicToSeedSync } = require('bip39');
+const { pki, random } = require('node-forge');
+
 /**
  * A client has a public/private keypair and an address.
  * It can send and receive messages on the Blockchain network.
@@ -25,19 +28,24 @@ module.exports = class Client extends EventEmitter {
    *    to send messages to all miners and clients.
    * @param {Block} [obj.startingBlock] - The starting point of the blockchain for the client.
    * @param {Object} [obj.keyPair] - The public private keypair for the client.
+   * @param {String} [obj.mnemonic] - the mnemonic that the user would like to use for their wallet
    */
-  constructor({name, password, net, startingBlock} = {}) {
+  constructor({name, password, net, startingBlock, mnemonic} = {}) {
     super();
 
     this.net = net;
     this.name = name;
 
     this.password = password ? password : this.name+"_pswd";
-
+    this.mnemonic = mnemonic;
 
     if (Blockchain.hasInstance()){
        let bc = Blockchain.getInstance();
-       this.generateAddress(bc.mnemonic);
+       this.seed = mnemonicToSeedSync(this.mnemonic, this.password).toString('hex');
+       this.prng = random.createInstance();
+       this.prng.seedFileSync = () => this.seed;
+       this.createWallet();
+       this.generateAddress(this.mnemonic);
     }
 
     // Establishes order of transactions.  Incremented with each
@@ -96,8 +104,17 @@ module.exports = class Client extends EventEmitter {
    * transactions.  This getter looks at the last confirmed block, since
    * transactions in newer blocks may roll back.
    */
+
+  // This one will likely need to be re-implemented
   get confirmedBalance() {
-    return this.lastConfirmedBlock.balanceOf(this.address);
+
+    let balance = 0;
+
+    this.wallet.forEach(({ address }) => {
+      balance += this.lastConfirmedBlock.balanceOf(address);
+    })
+
+    return balance;
   }
 
   /**
@@ -362,13 +379,34 @@ module.exports = class Client extends EventEmitter {
    * 
    * @param {String} mnemonic - mnemonic set for the blockchain instance
    */
-  generateAddress(mnemonic){
-    if (mnemonic === undefined){
+  generateAddress(){
+    if (this.mnemonic === undefined){
       throw new Error(`mnemonic not set`);
     }
-    this.keyPair = utils.generateKeypairFromMnemonic(mnemonic, this.password);
+    this.keyPair = this.generateKeypairFromMnemonic();
     this.address = utils.calcAddress(this.keyPair.public);
-    console.log(`${this.name}'s address is: ${this.address}`);
+    this.wallet.push({ address: this.address, keyPair: this.keyPair});
+
+    return this.address;
   }
 
+  /**
+   * Creates the wallet for the user when first instantiated
+   */
+  createWallet() {
+    this.wallet = [];
+    this.wallet.push({ address: this.address, keyPair: this.keyPair});
+  }
+
+  showAllUTXOs() {
+
+  }
+
+  generateKeypairFromMnemonic() {
+    const { privateKey, publicKey } = pki.rsa.generateKeyPair({ bits: 512, prng: this.prng, workers: 2 });
+    return {
+        public: pki.publicKeyToPem(publicKey),
+        private: pki.privateKeyToPem(privateKey),
+    };
+  }
 };

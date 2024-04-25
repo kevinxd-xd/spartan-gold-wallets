@@ -34,8 +34,8 @@ class TcpMiner extends Miner {
    * also takes a JSON object for the connection information and sets
    * up a listener to listen for incoming connections.
    */
-  constructor({name, startingBlock, miningRounds, keyPair, connection} = {}) {
-    super({name, net: new TcpNet(), startingBlock, keyPair, miningRounds});
+  constructor({name, startingBlock, miningRounds, keyPair, connection, mnemonic} = {}) {
+    super({name, net: new TcpNet(), startingBlock, keyPair, miningRounds, mnemonic});
 
     // Setting up the server to listen for connections
     this.connection = connection;
@@ -124,15 +124,17 @@ let knownMiners = config.knownMiners || [];
 // Clearing the screen so things look a little nicer.
 console.clear();
 
-let startingBalances = config.genesis ? config.genesis.startingBalances : {};
-let genesis = Blockchain.makeGenesis({
+
+// Need to adjust here
+// let startingBalances = config.genesis ? config.genesis.startingBalances : {};
+// We need to create a proper set up
+let blockchainInstance = Blockchain.createInstance({
   blockClass: Block,
   transactionClass: Transaction,
-  startingBalances: startingBalances
 });
 
 console.log(`Starting ${name}`);
-let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: genesis});
+let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: "Heck"});
 
 // Silencing the logging messages
 minnie.log = function(){};
@@ -154,6 +156,7 @@ function readUserInput() {
   What would you like to do?
   *(c)onnect to miner?
   *(t)ransfer funds?
+  *genereate new (a)ddress
   *(r)esend pending transactions?
   *show (b)alances?
   *show blocks for (d)ebugging and exit?
@@ -213,6 +216,10 @@ function readUserInput() {
         minnie.showBlockchain();
         process.exit(0);
         /* falls through */
+      case 'a':
+        minnie.generateAddress();
+        readUserInput();
+        break;
       default:
         console.log(`Unrecognized choice: ${answer}`);
     }
