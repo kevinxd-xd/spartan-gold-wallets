@@ -194,31 +194,22 @@ module.exports = class Block {
       return false;
     }
 
-    // Checking and updating nonce value.
-    // This portion prevents replay attacks.
-    let nonce = this.nextNonce.get(tx.from) || 0;
-    if (tx.nonce < nonce) {
-      if (client) client.log(`Replayed transaction ${tx.id}.`);
-      return false;
-    } else if (tx.nonce > nonce) {
-      // FIXME: Need to do something to handle this case more gracefully.
-      if (client) client.log(`Out of order transaction ${tx.id}.`);
-      return false;
-    } else {
-      this.nextNonce.set(tx.from, nonce + 1);
-    }
-
     // Adding the transaction to the block
     this.transactions.set(tx.id, tx);
 
-    // Taking gold from the sender
-    let senderBalance = this.balanceOf(tx.from);
-    this.balances.set(tx.from, senderBalance - tx.totalOutput());
+    // Delete all accounts
+    tx.from.forEach((addr) => {
+      console.log();
+      console.log(`**Deleting ${addr}`);
+      this.balances.delete(addr);
+      console.log();
+    });
 
-    // Giving gold to the specified output addresses
+    // This will put the money into the account
     tx.outputs.forEach(({amount, address}) => {
-      let oldBalance = this.balanceOf(address);
-      this.balances.set(address, amount + oldBalance);
+      console.log(`**Giving ${amount} to ${address}`);
+      let currBal = this.balanceOf(address);
+      this.balances.set(address, currBal + amount);
     });
 
     return true;

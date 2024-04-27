@@ -51,6 +51,12 @@ module.exports = class Miner extends Client {
    * @param {Set} [txSet] - Transactions the miner has that have not been accepted yet.
    */
   startNewSearch(txSet=new Set()) {
+    let rewardAddr = this.lastBlock.rewardAddr
+
+    // If the miner's address matches the rewarded address of the last block, we can continue we the checks
+    if (this.address === rewardAddr || this.lastBlock.balanceOf(this.addr) !== 0) {
+        this.generateAddress();
+    }
     this.currentBlock = Blockchain.makeBlock(this.address, this.lastBlock);
 
     // Merging txSet into the transaction queue.
@@ -185,4 +191,7 @@ module.exports = class Miner extends Client {
     return this.addTransaction(tx);
   }
 
+  get confirmedBalance() {
+    return this.getConfirmedBalance();
+}
 };

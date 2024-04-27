@@ -160,6 +160,7 @@ function readUserInput() {
   *(r)esend pending transactions?
   *show (b)alances?
   *show blocks for (d)ebugging and exit?
+  *show all UTXO balances
   *(s)ave your state?
   *e(x)it without saving?
   
@@ -218,6 +219,11 @@ function readUserInput() {
         /* falls through */
       case 'a':
         minnie.generateAddress();
+        readUserInput();
+        break;
+      case 'u':
+        console.clear();
+        minnie.showAllUTXOs();
         readUserInput();
         break;
       default:
