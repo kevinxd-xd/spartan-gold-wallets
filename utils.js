@@ -1,10 +1,15 @@
 "use strict";
 
 let crypto = require('crypto');
+//Added Bip39 for mnemonic
+//let bip39 = require('bip39');
 
 const { mnemonicToSeedSync } = require('bip39');
 const { pki, random } = require('node-forge');
 
+//added for mnemonic
+//const NUM_BYTES = 32;
+const Mnemonic = require('./mnemonic.js').Mnemonic;
 
 // CRYPTO settings
 const HASH_ALG = 'sha256';
@@ -75,4 +80,10 @@ exports.calcAddress = function(key) {
 
 exports.addressMatchesKey = function(addr, pubKey) {
   return addr === exports.calcAddress(pubKey);
+};
+
+exports.generateMnemonic = function(){
+	let mnemonic = new Mnemonic();
+	console.log(mnemonic.words());
+	return mnemonic.words(); 
 };

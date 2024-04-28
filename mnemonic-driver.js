@@ -5,6 +5,7 @@ let Blockchain = require('./blockchain.js');
 // Used to create a client outside of the blockchain constructor.
 let Client = require('./client.js');
 
+let utils = require('./utils.js');
 
 // Used to create a miner outside of the blockchain constructor.
 let Miner = require('./miner.js');
@@ -12,6 +13,8 @@ let Miner = require('./miner.js');
 let FakeNet = require('./fake-net.js');
 
 console.log("Starting simulation.  This may take a moment...");
+
+
 
 // Creating genesis block
 let bc = Blockchain.createInstance({
@@ -22,10 +25,12 @@ let bc = Blockchain.createInstance({
     {name: 'Minnie', amount: 400, mining: true},
     {name: 'Mickey', amount: 300, mining: true},
   ],
-  mnemonic: "antenna dwarf settle sleep must wool ocean once banana tiger distance gate great similar chief cheap dinner dolphin picture swing twenty two file nuclear",
+  mnemonic: utils.generateMnemonic(),
   net: new FakeNet(),
 });
 
+
+console.log(bc.alice);
 // Late client - to demonstrate that clients can be initialized after blockchain initialization
 let trudy = new Client({name: 'Trudy', startingBlock: bc.genesis});
 bc.register(trudy);

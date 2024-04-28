@@ -7,6 +7,7 @@ const Blockchain = require('./blockchain.js');
 const Block = require('./block.js');
 const Miner = require('./miner.js');
 const Transaction = require('./transaction.js');
+const utils = require('./utils.js');
 
 /**
  * This extends the FakeNet class to actually communicate over the network.
@@ -106,8 +107,10 @@ class TcpMiner extends Miner {
       connection: this.connection,
       keyPair: this.keyPair,
       knownMiners: this.knownMiners,
+	  //added
+	  mnemonic: config.mnemonic,
     };
-    writeFileSync(fileName, JSON.stringify(state));
+    writeFileSync("sampleConfigs/"+fileName, JSON.stringify(state));
   }
 
 }
@@ -134,6 +137,18 @@ let blockchainInstance = Blockchain.createInstance({
 });
 
 console.log(`Starting ${name}`);
+//generates mnemonic for config if no config is found
+let configMnemonic = "";
+if(config.mnemonic == undefined || config.mnemonic == ""){
+	config.mnemonic = utils.generateMnemonic();
+	
+}
+else{
+	configMnemonic = config.mnemonic;
+}
+//checks config mnemonic
+//console.log(config.mnemonic);
+
 let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: config.mnemonic});
 
 // Silencing the logging messages
@@ -228,6 +243,13 @@ function readUserInput() {
         minnie.showAllUTXOs();
         readUserInput();
         break;
+	  // case 'h':
+	    // console.clear();
+		// console.log("here");
+	    // console.log(config.mnemonic);
+		// readUserInput();
+		// break;
+		
       default:
         console.log(`Unrecognized choice: ${answer}`);
     }
