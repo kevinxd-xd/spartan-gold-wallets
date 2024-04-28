@@ -38,13 +38,13 @@ module.exports = class Client extends EventEmitter {
 
     this.password = password ? password : this.name+"_pswd";
     this.mnemonic = mnemonic;
+    this.wallet = [];
 
     if (Blockchain.hasInstance()){
        let bc = Blockchain.getInstance();
        this.seed = mnemonicToSeedSync(this.mnemonic, this.password).toString('hex');
        this.prng = random.createInstance();
        this.prng.seedFileSync = () => this.seed;
-       this.createWallet();
        this.generateAddress(this.mnemonic);
     }
 
@@ -137,6 +137,7 @@ module.exports = class Client extends EventEmitter {
    * specified in 'outputs'. A transaction fee may be specified, which can
    * be more or less than the default value.
    * 
+   * UTXO-based, ignores the postGeneric function as implemented from HW2
    * @param {Array} outputs - The list of outputs of other addresses and
    *    amounts to pay.
    * @param {number} [fee] - The transaction fee reward to pay the miner.
@@ -145,18 +146,64 @@ module.exports = class Client extends EventEmitter {
    */
   postTransaction(outputs, fee=Blockchain.DEFAULT_TX_FEE) {
     // We calculate the total value of gold needed.
-    let totalPayments = outputs.reduce((acc, {amount}) => acc + amount, 0) + fee;
+    let total = 0;
+    outputs.forEach(({amount, address}) => {
+        total += amount;
+    });
+    total += fee;
 
-    // Make sure the client has enough gold.
-    if (totalPayments > this.availableGold) {
-      throw new Error(`Requested ${totalPayments}, but account only has ${this.availableGold}.`);
+    if (total > this.getConfirmedBalance()) {
+        throw new Error("Not enough money!");
     }
 
-    // Create and broadcast the transaction.
-    return this.postGenericTransaction({
-      outputs: outputs,
-      fee: fee,
+    // Gather UTXOs
+    let gathered = 0;
+    // let walletPos = 0;
+    let gatheredPriv = [];
+    let gatheredAddrs = [];
+    let gatheredKeys = [];
+
+    while (total > gathered) {
+        // Takes and removes the oldest UTXO from the array first
+        let nextKey = this.wallet.shift();
+        gathered += this.lastConfirmedBlock.balanceOf(nextKey["address"]);
+        gatheredAddrs.push(nextKey["address"]);
+        gatheredKeys.push(nextKey["keyPair"].public);
+        gatheredPriv.push(nextKey["keyPair"].private);
+    }
+
+    // If how much we gathered is more than total, we need to create a change address
+    if (gathered > total) {
+      let change = gathered - total;
+      console.log();
+      console.log(`***Need to make ${change} change, with ${gathered} in and ${total} out.`);
+      console.log();
+      let newAddr = this.generateAddress();
+      outputs.push({amount: change, address: newAddr});
+    }
+
+    // Make the transaction
+    let tx = Blockchain.makeTransaction(Object.assign({
+      from: gatheredAddrs,
+      nonce: 0,
+      pubKey: gatheredKeys},
+      {outputs: outputs, fee: fee}));
+
+    // Sign the transaction with all private keys
+    gatheredPriv.forEach((pk) => {
+        tx.sign(pk);
     });
+    // Adding transaction to pending.
+    this.pendingOutgoingTransactions.set(tx.id, tx);
+
+    this.net.broadcast(Blockchain.POST_TRANSACTION, tx);
+
+    // If the client is a miner, add the transaction to the current block.
+    if (this.addTransaction !== undefined) {
+        this.addTransaction(tx);
+    }
+
+    return tx;
   }
 
   /**
@@ -399,7 +446,13 @@ module.exports = class Client extends EventEmitter {
   }
 
   showAllUTXOs() {
-
+    let table= [];
+    this.wallet.forEach(({ address }) => {
+      let amount = this.lastConfirmedBlock.balanceOf(address);
+      table.push({ address: address, amount: amount });
+    });
+    table.push({ address: "***TOTAL***", amount: this.confirmedBalance });
+    console.table(table);
   }
 
   generateKeypairFromMnemonic() {
@@ -408,5 +461,13 @@ module.exports = class Client extends EventEmitter {
         public: pki.publicKeyToPem(publicKey),
         private: pki.privateKeyToPem(privateKey),
     };
+  }
+
+  getConfirmedBalance() {
+    let totalAmount = 0;
+    this.wallet.forEach(({ address }) => {
+        totalAmount += this.lastConfirmedBlock.balanceOf(address);
+    });
+    return totalAmount;
   }
 };

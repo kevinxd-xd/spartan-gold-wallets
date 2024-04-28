@@ -134,7 +134,7 @@ let blockchainInstance = Blockchain.createInstance({
 });
 
 console.log(`Starting ${name}`);
-let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: "Heck"});
+let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: config.mnemonic});
 
 // Silencing the logging messages
 minnie.log = function(){};
@@ -147,10 +147,12 @@ let rl = readline.createInterface({
   output: process.stdout
 });
 
+let address = minnie.address;
+
 function readUserInput() {
   rl.question(`
   Funds: ${minnie.availableGold}
-  Address: ${minnie.address}
+  Address: ${address}
   Pending transactions: ${minnie.showPendingOut()}
   
   What would you like to do?
@@ -160,6 +162,7 @@ function readUserInput() {
   *(r)esend pending transactions?
   *show (b)alances?
   *show blocks for (d)ebugging and exit?
+  *show all UTXO balances
   *(s)ave your state?
   *e(x)it without saving?
   
@@ -217,7 +220,12 @@ function readUserInput() {
         process.exit(0);
         /* falls through */
       case 'a':
-        minnie.generateAddress();
+        address = minnie.generateAddress();
+        readUserInput();
+        break;
+      case 'u':
+        console.clear();
+        minnie.showAllUTXOs();
         readUserInput();
         break;
       default:

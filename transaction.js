@@ -32,7 +32,7 @@ module.exports = class Transaction {
    * @param [obj.fee] - The amount of gold offered as a transaction fee.
    * @param [obj.data] - Object with any additional properties desired for the transaction.
    */
-  constructor({from, nonce, pubKey, sig, outputs, fee=0, data={}}) {
+  constructor({from, nonce, pubKey, sig=[], outputs, fee=0, data={}}) {
     this.from = from;
     this.nonce = nonce;
     this.pubKey = pubKey;
@@ -68,7 +68,7 @@ module.exports = class Transaction {
    *    public key included in the transaction.
    */
   sign(privKey) {
-    this.sig = utils.sign(privKey, this.id);
+    this.sig.push(utils.sign(privKey, this.id));
   }
 
   /**
@@ -78,9 +78,22 @@ module.exports = class Transaction {
    * @returns {Boolean} - Validity of the signature and from address.
    */
   validSignature() {
-    return this.sig !== undefined &&
-        utils.addressMatchesKey(this.from, this.pubKey) &&
-        utils.verifySignature(this.pubKey, this.id, this.sig);
+    for (let i = 0; i < this.from.length; i++) {
+      if (!utils.addressMatchesKey(this.from[i], this.pubKey[i])) {
+          console.log("Address and keys do not match!");
+          return false;
+      }
+      if (this.sig[i] === undefined) {
+          console.log("No signature found!");
+          return false;
+      }
+      if (!utils.verifySignature(this.pubKey[i], this.id, this.sig[i])) {
+          console.log("Signature not valid for the ID!");
+          return false;
+      }
+
+      return true;
+    }
   }
 
   /**
@@ -92,7 +105,7 @@ module.exports = class Transaction {
    *    according to the balances from the specified block.
    */
   sufficientFunds(block) {
-    return this.totalOutput() <= block.balances.get(this.from);
+    return this.totalOutput() <= this.totalInput(block);
   }
 
   /**
@@ -103,4 +116,18 @@ module.exports = class Transaction {
   totalOutput() {
     return this.outputs.reduce( (totalValue, {amount}) => totalValue + amount, this.fee);
   }
+
+  totalInput(block) {
+    // Look up the balance for all address in the 'from' field of 'this'.
+
+    //
+    // **YOUR CODE HERE**
+    //
+    let sum = 0
+    this.from.forEach(pk => {
+       sum += block.balanceOf(pk) 
+    });
+
+    return sum;
+}
 };
