@@ -165,7 +165,6 @@ module.exports = class Client extends EventEmitter {
 
     while (total > gathered) {
         // Takes and removes the oldest UTXO from the array first
-        console.log(this.wallet);
         let nextKey = this.wallet.shift();
         gathered += this.lastConfirmedBlock.balanceOf(nextKey["address"]);
         gatheredAddrs.push(nextKey["address"]);
