@@ -1,1 +1,12 @@
-{"name":"Minnie","connection":{"hostname":"localhost","port":9000},"keyPair":{"public":"-----BEGIN PUBLIC KEY-----\r\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIsbmOX76t7pG9qI1pWP5mCZEhHCAnUq\r\ninEritzj9hzNB2R7teG3zZjNzjcu729In/BBSgJA7TAuQ/k72cMrtyECAwEAAQ==\r\n-----END PUBLIC KEY-----\r\n","private":"-----BEGIN RSA PRIVATE KEY-----\r\nMIIBOgIBAAJBAIsbmOX76t7pG9qI1pWP5mCZEhHCAnUqinEritzj9hzNB2R7teG3\r\nzZjNzjcu729In/BBSgJA7TAuQ/k72cMrtyECAwEAAQJAKXo4E9MSjBarlHSarwuy\r\nIHljtuHHQ9JEZ0wZYpWiK6HQ+PQ2yucK/14tKZc0AI7af5ooIN1i6I/0BoBW/TRD\r\ncQIhANlpej4H/sAhiag0oeFfbr3ov2gwvUf9UAqLTRJGoBVtAiEAo8w4iJdy4wOt\r\nQt+vcxI2C5rXhk9dk+gQqtKh+gxE/AUCICdpH2evO1bIvZNoNxALpJ94WXohm645\r\nFRFUPxxZARvhAiALwbzNERHN+ZWWFzggqk32x0Zw/YFZ/G411KiLqhXJgQIhAM3T\r\nD/AxfnfNQdzk/Y4GAqpMc6BXYgkXIvASGMsqHots\r\n-----END RSA PRIVATE KEY-----\r\n"},"knownMiners":[],"mnemonic":"execute review caution raw era panda twenty slogan ahead admit prison midnight peasant public grid lazy soccer laptop grow daring feature cannon before vehicle"}
+{
+    "name": "Minnie",
+    "connection": {
+        "hostname": "localhost",
+        "port": 9000
+    },
+    "startingBalances": {
+        "Q3dLZnPDR3DNvtXBJzZVPty38ueGFYP+zQjWfplQp68=": 5012
+    },
+    "knownMiners": [],
+    "mnemonic": "execute review caution raw era panda twenty slogan ahead admit prison midnight peasant public grid lazy soccer laptop grow daring feature cannon before vehicle"
+}

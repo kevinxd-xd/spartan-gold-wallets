@@ -204,6 +204,7 @@ module.exports = class Blockchain {
     clients = [],
     mnemonic,
     net,
+    startingBalances,
   }) {
 
     if (this.constructor.instance) {
@@ -245,7 +246,18 @@ module.exports = class Blockchain {
 
     this.powTarget = POW_BASE_TARGET >> BigInt(powLeadingZeroes);
 
-    this.initialBalances = new Map();
+    // If we passed in starting balances, put them in, else create a blank balance map
+    if (startingBalances) {
+      this.initialBalances = new Map();
+      // Add each address and their assoicated amount int
+      Object.keys(startingBalances).forEach((addr) => {
+        let amount = startingBalances[addr];
+        this.initialBalances.set(addr, amount);
+      })
+    }
+    else {
+      this.initialBalances = new Map();
+    }
 
     // generate random mnemonic if mnemonic not passed
     if (mnemonic === undefined){
