@@ -134,6 +134,7 @@ console.clear();
 let blockchainInstance = Blockchain.createInstance({
   blockClass: Block,
   transactionClass: Transaction,
+  startingBalances: config.startingBalances
 });
 
 console.log(`Starting ${name}`);
@@ -178,6 +179,7 @@ function readUserInput() {
   *show (b)alances?
   *show blocks for (d)ebugging and exit?
   *show all UTXO balances
+  *(f)und recovery
   *(s)ave your state?
   *e(x)it without saving?
   
@@ -243,13 +245,12 @@ function readUserInput() {
         minnie.showAllUTXOs();
         readUserInput();
         break;
-	  // case 'h':
-	    // console.clear();
-		// console.log("here");
-	    // console.log(config.mnemonic);
-		// readUserInput();
-		// break;
-		
+      case 'f':
+        rl.question(`Max Attempts: `, (attempts) => {
+          minnie.recoverFunds(attempts);
+          readUserInput();
+        });
+        break;
       default:
         console.log(`Unrecognized choice: ${answer}`);
     }

@@ -470,4 +470,23 @@ module.exports = class Client extends EventEmitter {
     });
     return totalAmount;
   }
+
+  /**
+   * Generates the next key and checks if there are funds, does it until it doesn't detect any more funds plus the no. of attempts. Ex. keys with money + 5 more
+   * @param {int} attempts check how many more attempts until it stops. default 5
+   */
+  recoverFunds(maxAttempts=5) {
+    let attempts = 0;
+    while(this.lastConfirmedBlock.balanceOf(this.address) !== 0 && attempts < maxAttempts) {
+      this.generateAddress();
+      if (this.lastConfirmedBlock.balanceOf(this.address) === 0) {
+        attempts += 1;
+      }
+      // Reset attempts if it finds money
+      else {
+        console.log(`Success! recovered ${this.lastConfirmedBlock.balanceOf(this.address)} from address ${this.address}`);
+        attempts = 0;
+      }
+    }
+  }
 };
