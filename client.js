@@ -455,8 +455,8 @@ module.exports = class Client extends EventEmitter {
     console.table(table);
   }
 
-  generateKeypairFromMnemonic() {
-    const { privateKey, publicKey } = pki.rsa.generateKeyPair({ bits: 512, prng: this.prng, workers: 2 });
+  generateKeypairFromMnemonic(prng=this.prng) {
+    const { privateKey, publicKey } = pki.rsa.generateKeyPair({ bits: 512, prng: prng, workers: 2 });
     return {
         public: pki.publicKeyToPem(publicKey),
         private: pki.privateKeyToPem(privateKey),
@@ -477,15 +477,21 @@ module.exports = class Client extends EventEmitter {
    */
   recoverFunds(maxAttempts=5) {
     let attempts = 0;
-    while(this.lastConfirmedBlock.balanceOf(this.address) !== 0 && attempts < maxAttempts) {
-      this.generateAddress();
-      if (this.lastConfirmedBlock.balanceOf(this.address) === 0) {
+    let genKeyPair;
+    let checkAddress;
+    while(this.lastConfirmedBlock.balanceOf(checkAddress) !== 0 || attempts < maxAttempts) {
+      genKeyPair = this.generateKeypairFromMnemonic();
+      checkAddress = utils.calcAddress(genKeyPair.public);
+      console.log(`Checking for funds at address: ${checkAddress}`);
+      if (this.lastConfirmedBlock.balanceOf(checkAddress) === 0) {
         attempts += 1;
+        console.log(`No funds were found at address: ${checkAddress}`);
       }
       // Reset attempts if it finds money
       else {
-        console.log(`Success! recovered ${this.lastConfirmedBlock.balanceOf(this.address)} from address ${this.address}`);
         attempts = 0;
+        this.wallet.push({ address: checkAddress, keyPair: genKeyPair});
+        console.log(`Successfully recovered ${this.lastConfirmedBlock.balanceOf(checkAddress)} at address ${checkAddress}!`);
       }
     }
   }

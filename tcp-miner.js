@@ -246,7 +246,7 @@ function readUserInput() {
         readUserInput();
         break;
       case 'f':
-        rl.question(`Max Attempts: `, (attempts) => {
+        rl.question(`Max Retries: `, (attempts) => {
           minnie.recoverFunds(attempts);
           readUserInput();
         });
