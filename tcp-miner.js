@@ -139,14 +139,15 @@ let blockchainInstance = Blockchain.createInstance({
 
 console.log(`Starting ${name}`);
 //generates mnemonic for config if no config is found
-let configMnemonic = "";
+
+//console.log(config.mnemonic);
+let generatedMnemonic = false;
 if(config.mnemonic == undefined || config.mnemonic == ""){
 	config.mnemonic = utils.generateMnemonic();
+	generatedMnemonic = true;
 	
 }
-else{
-	configMnemonic = config.mnemonic;
-}
+
 //checks config mnemonic
 //console.log(config.mnemonic);
 
@@ -157,6 +158,14 @@ minnie.log = function(){};
 
 // Register with known miners and begin mining.
 minnie.initialize(knownMiners);
+
+//saves the Json if mnemonic is generated
+//basically autosave
+if(generatedMnemonic){
+	let argvSplit = process.argv[2].split("/");
+	minnie.saveJson(argvSplit[argvSplit.length-1]);
+}
+console.log(minnie);
 
 let rl = readline.createInterface({
   input: process.stdin,
