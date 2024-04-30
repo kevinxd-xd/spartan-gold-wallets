@@ -1,13 +1,1 @@
-{
-    "name": "Minnie",
-    "connection": {
-        "hostname": "localhost",
-        "port": 9000
-    },
-    "startingBalances": {
-        "WHGUPctffqaWqXm4freSlZKmslozI+45EBVq3AoRbgE=": 57,
-        "Q3dLZnPDR3DNvtXBJzZVPty38ueGFYP+zQjWfplQp68=": 5012
-    },
-    "knownMiners": [],
-    "mnemonic": "execute review caution raw era panda twenty slogan ahead admit prison midnight peasant public grid lazy soccer laptop grow daring feature cannon before vehicle"
-}
+{"name":"Minnie","connection":{"hostname":"localhost","port":9000},"keyPair":{"public":"-----BEGIN PUBLIC KEY-----\r\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIge3NwxwByiqaE+wSox/OvIpsNzsuwi\r\npW1qTspIsZoH0YVMH4WrTm3T1ziLhFVBtszib/KUShXIygy7AgYV6x0CAwEAAQ==\r\n-----END PUBLIC KEY-----\r\n","private":"-----BEGIN RSA PRIVATE KEY-----\r\nMIIBOQIBAAJBAIge3NwxwByiqaE+wSox/OvIpsNzsuwipW1qTspIsZoH0YVMH4Wr\r\nTm3T1ziLhFVBtszib/KUShXIygy7AgYV6x0CAwEAAQJAfV63mtLzlyw2Qf3zmXJq\r\n+ZtYBQKmE5khdjIImYT0luEsc1kQtvK95Hk311bqI3hUATVd1K3V2YjVus9Eufja\r\nAQIhANFs+DNBQZvWY7BtA0S/vUMxHJy+4jK7Vrtfxvf/JkedAiEApmR75Ch5eJwh\r\n8G38eZwdWOU8glgf0xCjXjhIlHhLmYECIHtm42WISTmjfYBi6+8hsEsccEioba8J\r\nFpU4XYyaKxs9AiA9nJmPazlHYrDigSdqtFbdksxsC0uFcPS9L6QYbc64gQIgLJ0O\r\nh98wDTL52cI0MmyTSOWqb7VZGGn8cYJNHR0YR7Q=\r\n-----END RSA PRIVATE KEY-----\r\n"},"knownMiners":[],"mnemonic":"artwork pitch owner chat window debate clump couch desk wrong include wash woman client gift banner pretty ignore casino powder exotic assist gloom virtual"}
