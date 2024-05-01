@@ -87,3 +87,14 @@ exports.generateMnemonic = function(){
 	console.log(mnemonic.words());
 	return mnemonic.words(); 
 };
+
+exports.checkAddresses = function(minerMap,blockMap){
+	let temp = {};
+	for(let i in minerMap){
+		if(blockMap.get(i) !== undefined){
+			temp[i] = blockMap.get(i);
+		}
+	}
+	return temp;
+	
+};

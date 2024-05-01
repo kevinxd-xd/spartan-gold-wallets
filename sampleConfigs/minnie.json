@@ -1,13 +1,1 @@
-{
-    "name": "Minnie",
-    "connection": {
-        "hostname": "localhost",
-        "port": 9000
-    },
-    "startingBalances": {
-        "WHGUPctffqaWqXm4freSlZKmslozI+45EBVq3AoRbgE=": 57,
-        "3LAViTJ50G9nnOywYSBGk2XJaALP/1UP1Ii1TN4g4SM=": 5012
-    },
-    "knownMiners": [],
-    "mnemonic": "execute review caution raw era panda twenty slogan ahead admit prison midnight peasant public grid lazy soccer laptop grow daring feature cannon before vehicle"
-}
+{"name":"Minnie","connection":{"hostname":"localhost","port":9000},"startingBalances":{"WHGUPctffqaWqXm4freSlZKmslozI+45EBVq3AoRbgE=":82,"3LAViTJ50G9nnOywYSBGk2XJaALP/1UP1Ii1TN4g4SM=":5012},"keyPair":{"public":"-----BEGIN PUBLIC KEY-----\r\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJ/0tuVaZqjZ5mXUsdbR00kXZyLN5cpT\r\nh0RKLQ243z6QhZLzVA+e41owrB+TdmLEfGcWf6wh/y68qmoxjN2AR0MCAwEAAQ==\r\n-----END PUBLIC KEY-----\r\n","private":"-----BEGIN RSA PRIVATE KEY-----\r\nMIIBOQIBAAJBAJ/0tuVaZqjZ5mXUsdbR00kXZyLN5cpTh0RKLQ243z6QhZLzVA+e\r\n41owrB+TdmLEfGcWf6wh/y68qmoxjN2AR0MCAwEAAQJAUgjEQC4z1kcidXk219B2\r\nxtacy2nDfxeFmQ1du9rji4btiIQv7sITWO5Gv6qoNBOOF+DBncumP8oaJgijFruE\r\nYQIhAM+gSumjY18oCUvwfc+4UuV0C6/BZh+RucOWjNvMrYgRAiEAxTkqnBNU/jKk\r\n5iL+d5zdf+vWjxC9C80dZHvNoTSKThMCIG9lVwwHh5dUSbierUG3aXKGUobXws0J\r\nSJuxuJ1tMWWhAiBCiVzEtwjvkWpscdXjyLo5k/kY3w7IUnTeF55yCmW2nQIgRpgK\r\nX8c3bAGzaipgxq/wNxOKQqO9OjZJsUchjJefow0=\r\n-----END RSA PRIVATE KEY-----\r\n"},"knownMiners":[],"mnemonic":"execute review caution raw era panda twenty slogan ahead admit prison midnight peasant public grid lazy soccer laptop grow daring feature cannon before vehicle"}

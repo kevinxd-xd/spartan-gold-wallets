@@ -102,14 +102,18 @@ class TcpMiner extends Miner {
   }
 
   saveJson(fileName) {
+	  
     let state = {
       name: this.name,
       connection: this.connection,
+	  startingBalances: utils.checkAddresses(config.startingBalances, minnie.lastConfirmedBlock.balances),
       keyPair: this.keyPair,
       knownMiners: this.knownMiners,
 	  //added
 	  mnemonic: config.mnemonic,
+	  
     };
+	//console.log(JSON.stringify(state));
     writeFileSync("sampleConfigs/"+fileName, JSON.stringify(state));
   }
 
@@ -161,11 +165,12 @@ minnie.initialize(knownMiners);
 
 //saves the Json if mnemonic is generated
 //basically autosave
+
 if(generatedMnemonic){
 	let argvSplit = process.argv[2].split("/");
 	minnie.saveJson(argvSplit[argvSplit.length-1]);
 }
-console.log(minnie);
+//console.log(utils.checkAddresses(config.startingBalances, minnie.lastConfirmedBlock.balances));
 
 let rl = readline.createInterface({
   input: process.stdin,
