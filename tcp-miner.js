@@ -132,9 +132,10 @@ let knownMiners = config.knownMiners || [];
 console.clear();
 
 
-// Need to adjust here
-// let startingBalances = config.genesis ? config.genesis.startingBalances : {};
-// We need to create a proper set up
+/**
+ * ADDITIONAL IMPLEMENTATION:
+ * Fixed genesis block generation by updating to createInstance
+ */
 let blockchainInstance = Blockchain.createInstance({
   blockClass: Block,
   transactionClass: Transaction,
@@ -155,6 +156,7 @@ if(config.mnemonic == undefined || config.mnemonic == ""){
 //checks config mnemonic
 //console.log(config.mnemonic);
 
+// ADDITIONAL IMPLEMENTATION: Added field to accept mnemonic
 let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: config.mnemonic});
 
 // Silencing the logging messages
@@ -250,15 +252,27 @@ function readUserInput() {
         minnie.showBlockchain();
         process.exit(0);
         /* falls through */
+      /**
+       * ADDITIONAL IMPLEMENTATION:
+       * Generates new determinsitic address
+       */
       case 'a':
         address = minnie.generateAddress();
         readUserInput();
         break;
+      /**
+       * ADDITIONAL IMPLEMENTATION:
+       * Prints all UTXOs that exist in block, taken from HW2 (Kevin Chau)
+       */
       case 'u':
         console.clear();
         minnie.showAllUTXOs();
         readUserInput();
         break;
+      /**
+       * ADDITIONAL IMPLEMENTATION:
+       * Allows user to recover funds that exist in the block but they don't have in their wallet
+       */
       case 'f':
         rl.question(`Max Retries: `, (attempts) => {
           minnie.recoverFunds(attempts);

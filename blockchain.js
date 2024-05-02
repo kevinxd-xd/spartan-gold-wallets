@@ -247,6 +247,7 @@ module.exports = class Blockchain {
 
     this.powTarget = POW_BASE_TARGET >> BigInt(powLeadingZeroes);
 
+    // ADDITIONAL IMPLEMENTATION:
     // If we passed in starting balances, add them to the genesis block, else create a blank balance map
     if (startingBalances) {
       this.initialBalances = new Map();

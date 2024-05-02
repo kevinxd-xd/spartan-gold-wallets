@@ -421,6 +421,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Print out the blocks in the blockchain from the current head
    * to the genesis block.  Only the Block IDs are printed.
    */
@@ -434,6 +436,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Generate client address using mnemonic set by client or config file. After generating it, adds it to client's wallet
    */
   generateAddress(){
@@ -445,6 +449,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Creates the wallet for the user when first instantiated. Creates an intial starting address and adds it to the wallet
    */
   createWallet() {
@@ -453,6 +459,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Finds and prints a table of all the UTXOs in the block.
    */
   showAllUTXOs() {
@@ -466,6 +474,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Generates keypairs deterministically use the prng (Psuedo-random-number generator) library. By default use the prng instance created from instantiation
    * @param {*} prng - instance of PRNG, basicall the seed
    * @returns {object} - returns public and private key
@@ -479,6 +489,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Iterates through the client's wallet and sums up how much they have
    * @returns the balance of the user according to their wallet
    */
@@ -491,6 +503,8 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
+   * ADDITIONAL IMPLEMENTATION:
+   * 
    * Generates the next key and checks if there are funds, does it until it doesn't detect any more funds plus the no. of attempts. Ex. keys with money + 5 more
    * @param {int} maxAttempts check how many more attempts until it stops. default 5
    */
