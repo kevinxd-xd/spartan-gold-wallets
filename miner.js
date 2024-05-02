@@ -35,6 +35,8 @@ module.exports = class Miner extends Client {
 
   /**
    * Starts listeners and begins mining.
+   * 
+   * ADDITIONAL IMPLEMENTATION: Added a delay of 5000 ms to reduce/eliminate likelihood of race condition
    */
   initialize() {
     this.startNewSearch();
@@ -48,6 +50,8 @@ module.exports = class Miner extends Client {
 
   /**
    * Sets up the miner to start searching for a new block.
+   * 
+   * ADDITIONAL IMPLEMENTATION: Add UTXO model by forcing a new address to be generated after they find a reward
    * 
    * @param {Set} [txSet] - Transactions the miner has that have not been accepted yet.
    */

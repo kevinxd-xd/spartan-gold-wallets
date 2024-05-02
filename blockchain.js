@@ -190,6 +190,7 @@ module.exports = class Blockchain {
    * Constructor for the Blockchain configuration.  This constructor should not
    * be called outside of the class; nor should it be called more than once.
    *
+   * ADDITIONAL IMPLEMENTATION: Added a parameter to pass in "startingBalances" so we can add starting balances to tcpminer
    * @constructor
    */
   constructor({
@@ -246,7 +247,7 @@ module.exports = class Blockchain {
 
     this.powTarget = POW_BASE_TARGET >> BigInt(powLeadingZeroes);
 
-    // If we passed in starting balances, put them in, else create a blank balance map
+    // If we passed in starting balances, add them to the genesis block, else create a blank balance map
     if (startingBalances) {
       this.initialBalances = new Map();
       // Add each address and their assoicated amount int
@@ -258,6 +259,9 @@ module.exports = class Blockchain {
     else {
       this.initialBalances = new Map();
     }
+    
+    // NOTE EVERYTHING BELOW HERE, IS NOT RELEVANT TO OUR PROJECT
+    // Our mnemonic is based on client rather than the block chain
 
     // generate random mnemonic if mnemonic not passed
     if (mnemonic === undefined){

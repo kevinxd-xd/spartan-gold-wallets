@@ -174,6 +174,8 @@ module.exports = class Block {
   /**
    * Accepts a new transaction if it is valid and adds it to the block.
    *
+   * ADDITONAL IMPLEMENTATION: Added UTXO model from HW2 (Kevin Chau)
+   * 
    * @param {Transaction} tx - The transaction to add to the block.
    * @param {Client} [client] - A client object, for logging useful messages.
    *

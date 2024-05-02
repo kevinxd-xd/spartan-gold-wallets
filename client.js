@@ -12,6 +12,8 @@ const { pki, random } = require('node-forge');
 /**
  * A client has a public/private keypair and an address.
  * It can send and receive messages on the Blockchain network.
+ * 
+ * Credit: UVNishanth from Github and the SparanGold repo for giving us a starting point with determinisitic address generation.
  */
 module.exports = class Client extends EventEmitter {
 
@@ -19,6 +21,9 @@ module.exports = class Client extends EventEmitter {
    * The net object determines how the client communicates
    * with other entities in the system. (This approach allows us to
    * simplify our testing setup.)
+   * 
+   * ADDITIONAL IMPLEMENTATION: Takes the mnemonic and creates a PRNG instance that always reproduces the same sequence of data, allowing us
+   * to deterministically generate keypairs
    * 
    * @constructor
    * @param {Object} obj - The properties of the client.
@@ -40,12 +45,18 @@ module.exports = class Client extends EventEmitter {
     this.mnemonic = mnemonic;
     this.wallet = [];
 
+    // If the blockchain exists
     if (Blockchain.hasInstance()){
-       let bc = Blockchain.getInstance();
+      if (this.mnemonic === undefined){
+        throw new Error(`mnemonic not set`);
+      }
+       // Create seed
        this.seed = mnemonicToSeedSync(this.mnemonic, this.password).toString('hex');
        this.prng = random.createInstance();
+       // Set seed
        this.prng.seedFileSync = () => this.seed;
-       this.generateAddress(this.mnemonic);
+       // Generate initial/starting address
+       this.generateAddress();
     }
 
     // Establishes order of transactions.  Incremented with each
@@ -137,7 +148,8 @@ module.exports = class Client extends EventEmitter {
    * specified in 'outputs'. A transaction fee may be specified, which can
    * be more or less than the default value.
    * 
-   * UTXO-based, ignores the postGeneric function as implemented from HW2
+   * ADDTIONAL IMPLEMENTATION: UTXO-based, ignores the postGeneric function as implemented from HW2 (Kevin Chau)
+   * 
    * @param {Array} outputs - The list of outputs of other addresses and
    *    amounts to pay.
    * @param {number} [fee] - The transaction fee reward to pay the miner.
@@ -422,14 +434,9 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
-   * Generate client address using mnemonic set for the blockchain
-   * 
-   * @param {String} mnemonic - mnemonic set for the blockchain instance
+   * Generate client address using mnemonic set by client or config file. After generating it, adds it to client's wallet
    */
   generateAddress(){
-    if (this.mnemonic === undefined){
-      throw new Error(`mnemonic not set`);
-    }
     this.keyPair = this.generateKeypairFromMnemonic();
     this.address = utils.calcAddress(this.keyPair.public);
     this.wallet.push({ address: this.address, keyPair: this.keyPair});
@@ -438,13 +445,16 @@ module.exports = class Client extends EventEmitter {
   }
 
   /**
-   * Creates the wallet for the user when first instantiated
+   * Creates the wallet for the user when first instantiated. Creates an intial starting address and adds it to the wallet
    */
   createWallet() {
     this.wallet = [];
     this.wallet.push({ address: this.address, keyPair: this.keyPair});
   }
 
+  /**
+   * Finds and prints a table of all the UTXOs in the block.
+   */
   showAllUTXOs() {
     let table= [];
     this.wallet.forEach(({ address }) => {
@@ -455,6 +465,11 @@ module.exports = class Client extends EventEmitter {
     console.table(table);
   }
 
+  /**
+   * Generates keypairs deterministically use the prng (Psuedo-random-number generator) library. By default use the prng instance created from instantiation
+   * @param {*} prng - instance of PRNG, basicall the seed
+   * @returns {object} - returns public and private key
+   */
   generateKeypairFromMnemonic(prng=this.prng) {
     const { privateKey, publicKey } = pki.rsa.generateKeyPair({ bits: 512, prng: prng, workers: 2 });
     return {
@@ -463,6 +478,10 @@ module.exports = class Client extends EventEmitter {
     };
   }
 
+  /**
+   * Iterates through the client's wallet and sums up how much they have
+   * @returns the balance of the user according to their wallet
+   */
   getConfirmedBalance() {
     let totalAmount = 0;
     this.wallet.forEach(({ address }) => {
@@ -473,16 +492,19 @@ module.exports = class Client extends EventEmitter {
 
   /**
    * Generates the next key and checks if there are funds, does it until it doesn't detect any more funds plus the no. of attempts. Ex. keys with money + 5 more
-   * @param {int} attempts check how many more attempts until it stops. default 5
+   * @param {int} maxAttempts check how many more attempts until it stops. default 5
    */
   recoverFunds(maxAttempts=5) {
     let attempts = 0;
     let genKeyPair;
     let checkAddress;
+    // While there still is money in the addresses we are checking or we haven't exceeded our max number of attempts
     while(this.lastConfirmedBlock.balanceOf(checkAddress) !== 0 || attempts < maxAttempts) {
+      // Generates key/address
       genKeyPair = this.generateKeypairFromMnemonic();
       checkAddress = utils.calcAddress(genKeyPair.public);
       console.log(`Checking for funds at address: ${checkAddress}`);
+      // Is there money in that address? If not, move on, else we add it to the wallet and reset our attempts.
       if (this.lastConfirmedBlock.balanceOf(checkAddress) === 0) {
         attempts += 1;
         console.log(`No funds were found at address: ${checkAddress}`);

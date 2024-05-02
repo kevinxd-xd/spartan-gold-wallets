@@ -117,12 +117,15 @@ module.exports = class Transaction {
     return this.outputs.reduce( (totalValue, {amount}) => totalValue + amount, this.fee);
   }
 
+  /**
+   * Returns how much unspent outputs are being transferred in this transaction
+   * 
+   * ADDITIONAL IMPLEMENTATION: Added UTXO model feature from HW2 (Kevin Chau)
+   * @param {*} block block to use for checking balances of addresses
+   * @returns the total amount of output for this transaction
+   */
   totalInput(block) {
     // Look up the balance for all address in the 'from' field of 'this'.
-
-    //
-    // **YOUR CODE HERE**
-    //
     let sum = 0
     this.from.forEach(pk => {
        sum += block.balanceOf(pk) 
