@@ -90,17 +90,6 @@ class Mnemonic {
      // Creating the sequence, with an extra byte for the checksum.
     this.seq = Buffer.alloc(NUM_BYTES + 1);
 
-      //
-      // ***YOUR CODE HERE***
-      //
-      // Fill `this.seq` // with 32 random bytes.  The
-      // crypto.randomFillSync function may be useful here.
-      //
-      // Next, calculate the checksum.  The checksum is 1 byte,
-      // which is the first byte of the hash of the random sequence.
-      //
-      // Once you have calculated the checksum, append it to the
-      // end of the buffer.
 	  crypto.randomFillSync(this.seq); 
 	  
 	  this.seq.writeUInt8(this.calcChecksum(), NUM_BYTES);
@@ -116,16 +105,10 @@ class Mnemonic {
     // Returns an array of 11-bit numbers.
     let arr = this.constructor.split(this.seq);
 
-    //
-    // ***YOUR CODE HERE***
-    //
-    // Convert 11-bit numbers to the corresponding words from the dictionary,
-    // join together into a space-delimited string, and return the string.
+  
 	let stringBuilder = "";
 	for(let i in arr){
-		//console.log(this.constructor.translate11bit(arr[i]));
-		//console.log(arr[i]);
-		//console.log(this.wordlist[i]);
+	
 		stringBuilder += " " + this.wordlist[arr[i]];
 	}
 	stringBuilder = stringBuilder.substring(1);
@@ -150,18 +133,9 @@ class Mnemonic {
     // Extra byte for checksum
     this.seq = Buffer.alloc(NUM_BYTES + 1);
 
-    //
-    // ***YOUR CODE HERE***
-    //
-    // Determine the string of bits from the specified words.
-    // Remember that each word translates to an 11-bit number,
-    // so conversion can be a little awkward.
-    //
-    // Using that string of bits, convert to bytes and write
-    // to the `this.seq` buffer.
 	let binString = "";
 	for(let i in wordArray){
-		//console.log(this.wordList.length);
+		
 		for(let j in this.wordlist){
 			
 			if(wordArray[i] === this.wordlist[j]){
@@ -170,12 +144,12 @@ class Mnemonic {
 			}				
 			
 		}
-		//console.log(binString.length);
+
 		
 		
 	}
 	
-	//convertBinStringToByte(binString);
+	
 	let position = 0;
 	while(position !== NUM_BYTES+ 1){
 		let temp = this.constructor.convertBinStringToByte(binString.substring(0,8));
@@ -184,7 +158,6 @@ class Mnemonic {
 		binString = binString.substring(8);
 		
 	}
-	//console.log(binString.length);
 	
   }
  

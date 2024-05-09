@@ -102,7 +102,7 @@ class TcpMiner extends Miner {
   }
 
   saveJson(fileName) {
-	  
+	//Saves mnemonics and starting balances
     let state = {
       name: this.name,
       connection: this.connection,
@@ -113,7 +113,7 @@ class TcpMiner extends Miner {
 	  mnemonic: config.mnemonic,
 	  
     };
-	//console.log(JSON.stringify(state));
+
     writeFileSync("sampleConfigs/"+fileName, JSON.stringify(state));
   }
 
@@ -154,7 +154,6 @@ if(config.mnemonic == undefined || config.mnemonic == ""){
 }
 
 //checks config mnemonic
-//console.log(config.mnemonic);
 
 // ADDITIONAL IMPLEMENTATION: Added field to accept mnemonic
 let minnie = new TcpMiner({name: name, keyPair: config.keyPair, connection: config.connection, startingBlock: blockchainInstance.genesis, mnemonic: config.mnemonic});
